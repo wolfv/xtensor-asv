@@ -5,6 +5,7 @@
 #include <xtensor/xnoalias.hpp>
 #include <xtensor/xrandom.hpp>
 #include <xtensor/xarray.hpp>
+#include <xtensor/xcomplex.hpp>
 
 #define _LOOPITER_N 100
 
@@ -19,6 +20,7 @@ using tensor = xt::xtensor<T, N>;
 
 struct CppTime {
     xt::xtensor<double, 2> i, j;
+    xt::xtensor<std::complex<double>, 2> cpl_i;
 
     CppTime(std::size_t n, std::size_t m) {
         i = xt::random::rand<double>({n, m});
@@ -39,6 +41,12 @@ struct CppTime {
     {
         xt::xtensor<double, 2> res;
         BENCHMARK_NTIMES(xt::noalias(res) = i + j - xt::sin(j) + 3.0 * xt::pow(i, 12.43));
+    }
+
+    void complex_expr()
+    {
+        xt::xtensor<std::complex<double>, 2> res;
+        BENCHMARK_NTIMES(xt::imag(res) = xt::sin(xt::imag(cpl_i)) + 5.0);
     }
 
     void time_fma()
@@ -64,6 +72,7 @@ PYBIND11_MODULE(xtensor_benchmarks, m)
         .def("time_fma", &CppTime::time_fma)
         .def("many_leaf_expr", &CppTime::many_leaf_expr)
         .def("time_nothing", &CppTime::time_nothing)
+        .def("complex_expr", &CppTime::complex_expr)
     ;
 
     py::class_<DiffusionTime>(m, "DiffusionTime")

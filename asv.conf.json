@@ -21,11 +21,22 @@
     // Customizable commands for building, installing, and
     // uninstalling the project. See asv.conf.json documentation.
     //
-    "install_command": [],
-    "uninstall_command": [],
+    "install_command": [
+    ],
+    "uninstall_command": [
+        "rm -rf {env_dir}/include/xtensor",
+        "rm -f {conf_dir}/benchmarks/*.so"
+    ],
     "build_command": [
+        "echo 'HELLO! {env_dir} {conf_dir} {build_dir}'",
         "cmake {build_dir} -DCMAKE_INSTALL_PREFIX={env_dir}",
-        "cmake --build {build_dir} --target install"
+        "cmake --build {build_dir} --target install",
+        "rm -rf {conf_dir}/benchmarks/cpp/automated_build/",
+        "mkdir {conf_dir}/benchmarks/cpp/automated_build/",
+        "cmake -B{conf_dir}/benchmarks/cpp/automated_build/ -H{conf_dir}/benchmarks/cpp/ -DPYTHON_EXECUTABLE={env_dir}/bin/python3 -DCMAKE_INSTALL_PREFIX={env_dir}",
+        "cmake --build {conf_dir}/benchmarks/cpp/automated_build/ --target install"
+
+
         // "rm -rf {conf_dir}/cpp/build/",
         // "mkdir {conf_dir}/cpp/build/",
         // "cmake {conf_dir}/cpp/build/ -DCMAKE_INSTALL_PREFIX={env_dir}",

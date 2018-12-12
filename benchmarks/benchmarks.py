@@ -19,6 +19,9 @@ class XSuite:
     def time_many_leaf_expr(self):
         self.x.many_leaf_expr()
 
+    def time_complex_expr(self):
+        self.x.complex_expr()
+
 class NumpyBenchmarksSuite:
     def __init__(self):
         self.diff_t = DiffusionTime()
