@@ -1,4 +1,5 @@
 #!/bin/sh
 while read p; do
-  asv run $p
+  echo "Running $p"
+  asv run $p -v
 done < $1

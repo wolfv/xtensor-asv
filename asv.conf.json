@@ -25,21 +25,27 @@
     ],
     "uninstall_command": [
         "rm -rf {env_dir}/include/xtensor",
+        "rm -rf {env_dir}/include/xtl",
+        "rm -rf {env_dir}/include/xsimd",
+        "rm -rf {env_dir}/lib64/cmake/xtensor",
+        "rm -rf {env_dir}/lib64/cmake/xtl",
+        "rm -rf {env_dir}/lib64/cmake/xsimd",
+        "rm -rf {env_dir}/lib64/pkgconfig/xtl.pc",
+        "rm -rf {env_dir}/lib64/pkgconfig/xtensor.pc",
         "rm -f {conf_dir}/benchmarks/*.so"
     ],
     "build_command": [
-        "echo 'HELLO! {env_dir} {conf_dir} {build_dir}'",
-        "cmake {build_dir} -DCMAKE_INSTALL_PREFIX={env_dir}",
+        // "echo 'HELLO! {env_dir} {conf_dir} {build_dir}'",
+        "python3 {conf_dir}/scripts/install_deps.py {env_dir} {build_dir}",
+        "cmake -GNinja {build_dir} -DCMAKE_INSTALL_PREFIX={env_dir} -DBUILD_BENCHMARK=ON -DXTENSOR_USE_XSIMD=ON -DBENCHMARK_ENABLE_TESTING=OFF",
+        "cmake --build {build_dir} --target benchmark_xtensor",
         "cmake --build {build_dir} --target install",
+        "{build_dir}/benchmark/benchmark_xtensor --benchmark_out={build_dir}/benchmark_results.json --benchmark_out_format=json --benchmark_filter=lambda_higher_pow",
         "rm -rf {conf_dir}/benchmarks/cpp/automated_build/",
         "mkdir {conf_dir}/benchmarks/cpp/automated_build/",
         "cmake -B{conf_dir}/benchmarks/cpp/automated_build/ -H{conf_dir}/benchmarks/cpp/ -DPYTHON_EXECUTABLE={env_dir}/bin/python3 -DCMAKE_INSTALL_PREFIX={env_dir}",
-        "cmake --build {conf_dir}/benchmarks/cpp/automated_build/ --target install"
-
-
-        // "rm -rf {conf_dir}/cpp/build/",
-        // "mkdir {conf_dir}/cpp/build/",
-        // "cmake {conf_dir}/cpp/build/ -DCMAKE_INSTALL_PREFIX={env_dir}",
+        "cmake --build {conf_dir}/benchmarks/cpp/automated_build/ --target install",
+        "python3 {conf_dir}/scripts/generate_track_code.py {build_dir}/benchmark_results.json {conf_dir}/benchmarks/"
     ],
 
     // List of branches to benchmark. If not provided, defaults to "master"
@@ -69,7 +75,7 @@
 
     // The Pythons you'd like to test against.  If not provided, defaults
     // to the current version of Python used to run `asv`.
-    "pythons": ["3.6"],
+    // "pythons": ["3.7"],
 
     // The list of conda channel names to be searched for benchmark
     // dependency packages in the specified order

@@ -1,3 +1,5 @@
+#include "helper.hpp"
+
 namespace xt
 {
 	auto allpairs_distances_loops(const tensor<double, 2>& X, const tensor<double, 2>& Y)
@@ -9,7 +11,7 @@ namespace xt
 			for (size_t j = 0; j < Y.shape()[0]; ++j)
 			{
 			    result(i, j) = sum(eval(square(view(X, i, all()) - view(Y, j, all()))),
-			    				   evaluation_strategy::immediate())();
+			    				   REDUCER_IMMEDIATE)();
 			}
 		}
 		return result;
