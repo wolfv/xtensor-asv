@@ -40,7 +40,7 @@
         "cmake -GNinja {build_dir} -DCMAKE_INSTALL_PREFIX={env_dir} -DBUILD_BENCHMARK=ON -DXTENSOR_USE_XSIMD=ON -DBENCHMARK_ENABLE_TESTING=OFF",
         "cmake --build {build_dir} --target benchmark_xtensor",
         "cmake --build {build_dir} --target install",
-        "{build_dir}/benchmark/benchmark_xtensor --benchmark_out={build_dir}/benchmark_results.json --benchmark_out_format=json --benchmark_filter=lambda_higher_pow",
+        "{build_dir}/benchmark/benchmark_xtensor --benchmark_out={build_dir}/benchmark_results.json --benchmark_out_format=json",
         "rm -rf {conf_dir}/benchmarks/cpp/automated_build/",
         "mkdir {conf_dir}/benchmarks/cpp/automated_build/",
         "cmake -B{conf_dir}/benchmarks/cpp/automated_build/ -H{conf_dir}/benchmarks/cpp/ -DPYTHON_EXECUTABLE={env_dir}/bin/python3 -DCMAKE_INSTALL_PREFIX={env_dir}",

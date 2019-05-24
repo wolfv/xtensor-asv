@@ -1,5 +1,4 @@
 # we need to write a custom script to install xtl & xsimd...
-
 import sys, os, subprocess, datetime, shutil
 
 env_dir, build_dir = sys.argv[1], sys.argv[2]
@@ -93,7 +92,7 @@ def checkout_install(folder, version):
     run_in_folder(get_dir(folder), ['git', 'checkout', version])
     build_folder = os.path.join(get_dir(folder), 'build')
     check_create_dir(build_folder)
-    run_in_folder(build_folder, ['cmake', '..', f'-DCMAKE_INSTALL_PREFIX={env_dir}'])
+    run_in_folder(build_folder, ['cmake', '..', '-DBUILD_TESTS=OFF', f'-DCMAKE_INSTALL_PREFIX={env_dir}'])
     run_in_folder(build_folder, ['make', 'install'])
 
 def install_matching_version(proj):
