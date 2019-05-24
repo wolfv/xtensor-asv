@@ -46,14 +46,8 @@ def run_in_folder(folder, pargs):
     if err: err = err.decode('utf-8')
     return out, err, errcode
 
-def fetch_xtl():
-    run_in_folder(get_dir(''), ['git', 'clone', 'https://github.com/QuantStack/xtl'])
-    run_in_folder(get_dir('xtl'), ['git', 'fetch'])
-    # vals, err, errcode = run_in_folder(get_dir('xtl'), )
-
 def parse_date(dt):
     return datetime.datetime.strptime(dt.strip(), '%Y-%m-%d %H:%M:%S %z')
-
 
 def get_date_of_version(version):
     version_string = '.'.join([str(v) for v in version])
@@ -65,11 +59,9 @@ def get_version_before(proj, xtensor_date):
     procargs = ["git", "--no-pager", "log", "--no-walk", "--tags", "--simplify-by-decoration", "--pretty=format:%ai#%D"]
     out, err, errcode = run_in_folder(get_dir(proj), procargs)
 
-    print(out)
     date_version = []
     for line in out.splitlines():
         date, version_tag = line.split('#')
-        print(date, version_tag)
         xdate = parse_date(date)
         valid_version = True
         tag_split = version_tag.split(',')
@@ -85,7 +77,7 @@ def get_version_before(proj, xtensor_date):
         for c in version:
             if not (c.isdigit() or c == '.'):
                 valid_version = False
-                print("this is not a correct tag?")
+                print("this is not a correct tag?", version_tag)
 
         if valid_version:
             date_version.append((xdate, version))
@@ -94,35 +86,23 @@ def get_version_before(proj, xtensor_date):
 
     for v in date_version:
         if v[0] < xtensor_date:
-            print("Found {} {} for {}.".format(proj, v[1], xtensor_date))
+            print(f"Found {proj} {v[1]} for {xtensor_date}.")
             return v[1]
 
 def checkout_install(folder, version):
     run_in_folder(get_dir(folder), ['git', 'checkout', version])
     build_folder = os.path.join(get_dir(folder), 'build')
     check_create_dir(build_folder)
-    run_in_folder(build_folder, ['cmake', '..', '-DCMAKE_INSTALL_PREFIX={}'.format(env_dir)])
+    run_in_folder(build_folder, ['cmake', '..', f'-DCMAKE_INSTALL_PREFIX={env_dir}'])
     run_in_folder(build_folder, ['make', 'install'])
 
-def install_matching_xsimd_version():
+def install_matching_version(proj):
     version = extract_xtensor_version()
     date = get_date_of_version(version)
-    run_in_folder(get_dir(''), ['git', 'clone', 'https://github.com/QuantStack/xsimd'])
-    run_in_folder(get_dir('xsimd'), ['git', 'fetch'])
-    checkout_install('xsimd', get_version_before('xsimd', date))
-
-def install_matching_xtl_version():
-    version = extract_xtensor_version()
-    date = get_date_of_version(version)
-    run_in_folder(get_dir(''), ['git', 'clone', 'https://github.com/QuantStack/xtl'])
-    run_in_folder(get_dir('xtl'), ['git', 'fetch'])
-    checkout_install('xtl', get_version_before('xtl', date))
-
-# try_remove_dir(os.path.join(env_dir, 'xtl'))
-# try_remove_dir(os.path.join(env_dir, 'xsimd'))
-# try_remove_dir(os.path.join(env_dir, 'lib64/xtl'))
-# try_remove_dir(os.path.join(env_dir, 'lib64/xsimd'))
+    run_in_folder(get_dir(''), ['git', 'clone', f'https://github.com/QuantStack/{proj}'])
+    run_in_folder(get_dir(proj), ['git', 'fetch'])
+    checkout_install(proj, get_version_before(proj, date))
 
 check_create_dir(deps_cache_dir)
-install_matching_xsimd_version()
-install_matching_xtl_version()
+install_matching_version('xsimd')
+install_matching_version('xtl')
