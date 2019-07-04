@@ -50,7 +50,8 @@ def parse_date(dt):
 
 def get_date_of_version(version):
     version_string = '.'.join([str(v) for v in version])
-    out, err, errcode = run_in_folder(build_dir, 'git --no-pager log -1 --format=%ai'.split() + [version_string])
+    # out, err, errcode = run_in_folder(build_dir, 'git --no-pager log -1 --format=%ai'.split() + [version_string])
+    out, err, errcode = run_in_folder(build_dir, 'git --no-pager log -1 --format=%ai'.split())
     xdate = parse_date(out)
     return xdate
 
