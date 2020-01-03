@@ -12,6 +12,8 @@ def extract_xtensor_version():
             if "XTENSOR_VERSION_MINOR" in line:
                 minor = int(line.split(" ")[-1])
             if "XTENSOR_VERSION_PATCH" in line:
+                if '-' in line:
+                    line = line[:line.find('-')]
                 patch = int(line.split(" ")[-1])
     return (major, minor, patch)
 
