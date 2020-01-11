@@ -8,6 +8,7 @@ namespace xt
 		view(z, all(), all(), 0) = xt::reshape_view(x, {N, std::size_t(1)});
 		view(z, all(), all(), 1) = x;
 
-		return z.reshape({N * N, 3});
+		z.reshape({N * N, std::size_t(3)});
+		return z;
 	}
 }
